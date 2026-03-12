@@ -46,7 +46,15 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 ## Outline
 
-1. Run `.specify/scripts/bash/check-prerequisites.sh --json --require-tasks --include-tasks` from repo root and parse FEATURE_DIR and AVAILABLE_DOCS list. All paths must be absolute. For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot").
+1. **Load the Project Constitution** — Read `.specify/memory/constitution.md` before any other step. Every implementation decision MUST comply with the principles in that document. Pay particular attention to:
+   - **XI. Test-Driven Development (TDD)** — tests MUST be written before implementation code, no exceptions.
+   - **XII. One Task, One Branch** — each task from `tasks.md` MUST be implemented on its own git branch named `task/[###-feature-name]/[task-id]-[short-description]` created from `main`, and merged to `main` before starting the next task.
+   - **XIII. Manual Testing by the Agent** — before marking a task complete the agent MUST run the feature interactively with realistic inputs and document the observed outcome.
+   - **XIV. Task Completion Gate** — a task is NOT complete until ALL five conditions are verified: (1) green tests, (2) lint clean, (3) no TypeScript errors, (4) no runtime errors, (5) manual testing passed.
+   
+   If `.specify/memory/constitution.md` cannot be read, **STOP** and report the error — do not proceed without the constitution.
+
+2. Run `.specify/scripts/bash/check-prerequisites.sh --json --require-tasks --include-tasks` from repo root and parse FEATURE_DIR and AVAILABLE_DOCS list. All paths must be absolute. For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot").
 
 2. **Check checklists status** (if FEATURE_DIR/checklists/ exists):
    - Scan all checklist files in the checklists/ directory
@@ -137,36 +145,50 @@ You **MUST** consider the user input before proceeding (if not empty).
    - **Task details**: ID, description, file paths, parallel markers [P]
    - **Execution flow**: Order and dependency requirements
 
-6. Execute implementation following the task plan:
-   - **Phase-by-phase execution**: Complete each phase before moving to the next
-   - **Respect dependencies**: Run sequential tasks in order, parallel tasks [P] can run together  
-   - **Follow TDD approach**: Execute test tasks before their corresponding implementation tasks
-   - **File-based coordination**: Tasks affecting the same files must run sequentially
-   - **Validation checkpoints**: Verify each phase completion before proceeding
+6. Execute implementation following the task plan — **one task, one branch** (Constitution XII):
+   - **Branch first**: Before writing any code for a task, create a branch named `task/[###-feature-name]/[task-id]-[short-description]` from `main`. Do NOT start a task on an existing open branch.
+   - **Phase-by-phase execution**: Complete each phase before moving to the next.
+   - **Respect dependencies**: Run sequential tasks in order; parallel tasks [P] can run together.
+   - **TDD — tests before code** (Constitution XI): For every task that produces implementation code, write the failing test(s) FIRST. Confirm the test(s) are red before writing the implementation. Only then write the minimum code to make the test(s) green. Refactoring comes after green. This is non-negotiable — implementing without a preceding failing test is a constitutional violation.
+   - **File-based coordination**: Tasks affecting the same files must run sequentially.
+   - **Validation checkpoints**: Verify each phase completion before proceeding.
 
 7. Implementation execution rules:
-   - **Setup first**: Initialize project structure, dependencies, configuration
-   - **Tests before code**: If you need to write tests for contracts, entities, and integration scenarios
-   - **Core development**: Implement models, services, CLI commands, endpoints
-   - **Integration work**: Database connections, middleware, logging, external services
-   - **Polish and validation**: Unit tests, performance optimization, documentation
+   - **Setup first**: Initialize project structure, dependencies, configuration.
+   - **Tests before code** (Constitution XI): Write failing tests for contracts, entities, and integration scenarios before any implementation code.
+   - **Core development**: Implement models, services, CLI commands, endpoints — only after their tests exist and are red.
+   - **Integration work**: Database connections, middleware, logging, external services.
+   - **Polish and validation**: Refactor only after tests are green.
 
 8. Progress tracking and error handling:
-   - Report progress after each completed task
-   - Halt execution if any non-parallel task fails
-   - For parallel tasks [P], continue with successful tasks, report failed ones
-   - Provide clear error messages with context for debugging
-   - Suggest next steps if implementation cannot proceed
-   - **IMPORTANT** For completed tasks, make sure to mark the task off as [X] in the tasks file.
+   - Report progress after each completed task.
+   - Halt execution if any non-parallel task fails.
+   - For parallel tasks [P], continue with successful tasks, report failed ones.
+   - Provide clear error messages with context for debugging.
+   - Suggest next steps if implementation cannot proceed.
+   - **IMPORTANT**: For completed tasks, mark the task off as [X] in the tasks file.
 
-9. Completion validation:
-   - Verify all required tasks are completed
-   - Check that implemented features match the original specification
-   - Validate that tests pass and coverage meets requirements
-   - Confirm the implementation follows the technical plan
-   - Report final status with summary of completed work
+9. Task Completion Gate (Constitution XIV) — enforce for EVERY task before merging:
+   - **[1/5] Green tests**: Run `npm test` (or project equivalent). Exit code MUST be 0 with zero failures.
+   - **[2/5] Lint clean**: Run `npm run lint` (or project equivalent). Exit code MUST be 0.
+   - **[3/5] No TypeScript errors**: Run `tsc --noEmit` (or project equivalent). Exit code MUST be 0.
+   - **[4/5] No runtime errors**: Start / invoke the feature with realistic inputs and confirm no unhandled exceptions or crashes.
+   - **[5/5] Manual testing passed** (Constitution XIII): Walk through the primary user scenario end-to-end as a human would. Document what was tested and the observed outcome in the task completion note. This replaces nothing — automated tests and manual testing are both required.
+   
+   A task that satisfies only 4 of 5 conditions is **NOT complete**. The branch MUST NOT be merged until all 5 are confirmed and documented. After all 5 conditions pass, merge the task branch to `main` before starting the next task.
 
-Note: This command assumes a complete task breakdown exists in tasks.md. If tasks are incomplete or missing, suggest running `/speckit.tasks` first to regenerate the task list.
+   Report the gate result as:
+   ```
+   Task Completion Gate — [task-id]
+   [1/5] Green tests    ✓ / ✗
+   [2/5] Lint clean     ✓ / ✗
+   [3/5] TypeScript     ✓ / ✗
+   [4/5] No runtime err ✓ / ✗
+   [5/5] Manual testing ✓ / ✗ — [brief description of what was tested and observed]
+   Result: PASS / FAIL
+   ```
+
+Note: This command assumes a complete task breakdown exists in tasks.md. If tasks are incomplete or missing, suggest running `/speckit.tasks` first to regenerate the task list. All implementation work is governed by `.specify/memory/constitution.md` — read it in step 1 and treat every principle as non-negotiable.
 
 10. **Check for extension hooks**: After completion validation, check if `.specify/extensions.yml` exists in the project root.
     - If it exists, read it and look for entries under the `hooks.after_implement` key
