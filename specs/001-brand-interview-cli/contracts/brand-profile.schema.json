@@ -1,0 +1,108 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "brand-profile.schema.json",
+  "title": "BrandProfile",
+  "description": "Raw brand profile produced by the brand-interview-cli. All values are exactly as entered by the user — no enrichment, no defaults. Agent 1 (Brand Discovery Agent) is the downstream validator.",
+  "type": "object",
+  "required": [
+    "archetype",
+    "brandName",
+    "colors",
+    "typography",
+    "scope",
+    "accessibility",
+    "themes"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "archetype": {
+      "type": "string",
+      "enum": [
+        "Enterprise B2B",
+        "Consumer B2C",
+        "Mobile-First",
+        "Multi-Brand Platform",
+        "Custom"
+      ],
+      "description": "Design system archetype selected during the interview."
+    },
+    "brandName": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Primary brand name as entered by the user."
+    },
+    "colors": {
+      "type": "object",
+      "required": ["primary", "secondary"],
+      "additionalProperties": false,
+      "properties": {
+        "primary": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Primary brand color as entered (e.g. '#1A2B3C'). Format not validated at CLI level."
+        },
+        "secondary": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Secondary brand color as entered."
+        }
+      }
+    },
+    "typography": {
+      "type": "object",
+      "required": ["fontFamily", "scaleRatio"],
+      "additionalProperties": false,
+      "properties": {
+        "fontFamily": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Primary font family name (e.g. 'Inter')."
+        },
+        "scaleRatio": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Type scale ratio as free-text (e.g. '1.25' or 'Major Third'). Format enforced by Agent 1."
+        }
+      }
+    },
+    "scope": {
+      "type": "string",
+      "enum": ["Starter", "Standard", "Comprehensive"],
+      "description": "Component scope level for the generated design system."
+    },
+    "accessibility": {
+      "type": "object",
+      "required": ["level"],
+      "additionalProperties": false,
+      "properties": {
+        "level": {
+          "type": "string",
+          "enum": ["AA", "AAA"],
+          "description": "WCAG accessibility conformance target."
+        }
+      }
+    },
+    "themes": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1,
+      "description": "List of theme names (e.g. ['light', 'dark', 'high-contrast'])."
+    },
+    "brands": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "minItems": 1,
+      "description": "Brand names for Multi-Brand Platform archetype only. Absent for all other archetypes."
+    },
+    "componentOverrides": {
+      "type": "object",
+      "description": "Advanced per-component overrides. Any archetype. Structure defined by Agent 1."
+    }
+  },
+  "if": {
+    "properties": { "archetype": { "const": "Multi-Brand Platform" } }
+  },
+  "then": {
+    "required": ["brands"]
+  }
+}

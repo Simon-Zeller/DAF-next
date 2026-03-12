@@ -48,9 +48,16 @@ description: "Task list template for feature implementation"
 
 **Purpose**: Project initialization and basic structure
 
+<!--
+  For DAF crew features: Phase 1 setup MUST include declaring and validating
+  the crew's I/O contract. No crew implementation begins without a verified
+  contract (constitutional principle X).
+-->
+
 - [ ] T001 Create project structure per implementation plan
 - [ ] T002 Initialize [language] project with [framework] dependencies
 - [ ] T003 [P] Configure linting and formatting tools
+- [ ] T004 [DAF] Declare I/O contract — verify required inputs exist on disk before proceeding
 
 ---
 

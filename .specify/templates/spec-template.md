@@ -98,6 +98,26 @@
 ### Key Entities *(include if feature involves data)*
 
 - **[Entity 1]**: [What it represents, key attributes without implementation]
+
+### Crew I/O Contract *(mandatory for DAF crew features)*
+
+| | Files |
+|---|---|
+| **Reads (required)** | [List files this crew MUST find on disk before starting] |
+| **Reads (optional)** | [List files this crew uses if present] |
+| **Writes** | [List all files this crew produces in the output folder] |
+
+**Boundary constraints** (check all that apply):
+- [ ] This crew does NOT produce both spec YAMLs and TSX source for the same component
+- [ ] This crew does NOT produce both raw tokens and compiled tokens
+- [ ] This crew does NOT write to another crew's declared output namespace
+
+### Token Bindings *(mandatory for any component-producing feature)*
+
+All style values MUST reference compiled tokens. List the semantic token categories
+this component or crew consumes:
+
+- `[token.category.name]` — used for [purpose]
 - **[Entity 2]**: [What it represents, relationships to other entities]
 
 ## Success Criteria *(mandatory)*

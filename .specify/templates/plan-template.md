@@ -31,7 +31,41 @@
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+Verify alignment with all 10 DAF constitutional principles before proceeding:
+
+- [ ] **I. Agent-First, Tool-Assisted** — Does this feature use agents to orchestrate all
+  decisions? Are deterministic tools invoked by agents, not standalone?
+- [ ] **II. Token-First** — Are all visual decisions expressed as design tokens? Is W3C DTCG
+  the authoring format? No hardcoded values in component source?
+- [ ] **III. Sequential Crew Handoff** — Does the crew write to the shared output folder?
+  Does it fail-fast if required inputs are missing? No event bus or in-memory passing?
+- [ ] **IV. Bounded Retry** — Are retry limits enforced (max 3/component for Phases 1–3,
+  max 2/crew for Phases 4–6)? Are failures logged with full traces, never silent?
+- [ ] **V. Human Gates** — Are the two mandatory gates (Brand Profile, Final Output) present?
+  No additional gates unless accompanied by an ADR?
+- [ ] **VI. Dual Quality Gate** — Does every component pass both composite score ≥ 70/100
+  AND all individual Agent 30 gates? Doc completeness NOT checked in Phase 3?
+- [ ] **VII. Anthropic-Only Model Tiers** — Are model assignments from PRD §3.7? No tier
+  changes hardcoded in source? Overrides via env vars only?
+- [ ] **VIII. Plugin Architecture** — Are all tools, compilers, linters implemented as
+  plugins? No tool logic inlined in core pipeline code?
+- [ ] **IX. Phase Ordering** — Does Phase N start only after Phase N-1 completes? Are
+  intra-phase orderings respected (3: D2C→Factory; 4: Docs→Governance)?
+- [ ] **X. No Crew Crosses Boundaries** — Does this crew stay within its declared I/O
+  contract? No crew producing both specs and code, or both raw and compiled tokens?
+- [ ] **XI. Test-Driven Development** — Is every function preceded by a failing test?
+  Are tests lean, single-behavior, and named descriptively? No implementation before
+  its test exists?
+- [ ] **XII. One Task, One Branch** — Does every task in `tasks.md` have its own branch
+  from `main`? Is the naming convention `task/[feature]/[id]-[desc]` followed?
+  Is the branch merged to `main` before the next task begins?
+- [ ] **XIII. Manual Testing by the Agent** — Has the agent walked through the primary
+  user scenario end-to-end with realistic inputs? Is the observed outcome documented?
+  Automated tests alone do NOT satisfy this gate.
+- [ ] **XIV. Task Completion Gate** — Before merging: green tests, lint clean, zero
+  TypeScript errors, no runtime errors, AND manual testing passed? All 5 are mandatory.
+
+**If any gate fails**: Reference an accepted ADR in `docs/decisions/` before proceeding.
 
 ## Project Structure
 

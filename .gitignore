@@ -1,0 +1,44 @@
+# Node.js / npm
+node_modules/
+package-lock.json
+npm-debug.log*
+yarn-error.log*
+.npmrc
+
+# Build artifacts
+dist/
+build/
+*.tsbuildinfo
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.user
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+lerna-debug.log*
+
+# Coverage
+coverage/
+.nyc_output/
+
+# TypeScript
+*.tsc
+
+# Misc
+.speakeasy/
+temp/
+tmp/
