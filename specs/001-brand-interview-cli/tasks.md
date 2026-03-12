@@ -14,8 +14,8 @@ Merged to `main` after passing all 5 Task Completion Gate conditions (Constituti
 
 **Purpose**: Monorepo and package scaffolding — nothing else can begin until this is done.
 
-- [x] T001 Create npm workspaces configuration in package.json (repo root, `"workspaces": ["packages/*"]`)
-- [x] T002 Scaffold package in packages/brand-interview-cli/ (package.json, tsconfig.json, vitest.config.ts, .eslintrc.json)
+- [] T001 Create npm workspaces configuration in package.json (repo root, `"workspaces": ["packages/*"]`)
+- [] T002 Scaffold package in packages/brand-interview-cli/ (package.json, tsconfig.json, vitest.config.ts, .eslintrc.json)
 
 ---
 
